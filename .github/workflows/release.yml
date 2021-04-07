@@ -1,0 +1,24 @@
+name: Release
+on:
+  release:
+    types: [ published ]
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Gradle Wrapper Validation
+        uses: gradle/wrapper-validation-action@v1
+      - name: Setup Java JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+      - name: Publish To Sonatype OSSRH
+        run: ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository
+        env:
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}

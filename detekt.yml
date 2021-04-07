@@ -1,0 +1,10 @@
+style:
+  MaxLineLength:
+    maxLineLength: 200
+  WildcardImport:
+    active: false
+formatting:
+  MaximumLineLength:
+    maxLineLength: 200
+  NoWildcardImports:
+    active: false
