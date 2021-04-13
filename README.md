@@ -7,6 +7,23 @@ KTypes is a zero-dependency Kotlin library for accurately introspecting type inf
 ```kotlin
 import kotlin.reflect.full.createType
 
+interface Bar<T1, T2, T3>
+
+interface Foo<T1, T2> : Bar<T2, T1, List<T2?>>
+
+class FooImpl : Foo<String?, Int>
+
+fun main() {
+    val fooImplType = FooImpl::class.createType()
+    val barType = fooImplType.findSuperType(Bar::class)
+
+    println(barType)// Bar<Int, String?, List<Int?>>
+}
+```
+
+```kotlin
+import kotlin.reflect.full.createType
+
 interface Bar<T> : List<Array<T?>>
 
 interface Foo : Bar<String>
@@ -70,12 +87,30 @@ fun main() {
 }
 ```
 
+```kotlin
+annotation class Ann(val type: KClass<*>)
+
+private object StringMap : TypeCapture<Map<String, String?>>
+
+@Ann(type = StringMap::class)
+class Foo
+
+fun main() {
+    val type = Foo::class
+        .findAnnotation<Ann>()
+        ?.type
+        ?.let { if (it.isSubclassOf(TypeCapture::class)) (it as KClass<TypeCapture<*>>).capture() else it.starProjectedType }
+
+    println(type)// Map<String, String?>
+}
+```
+
 ## Download
 
 Gradle:
 ```gradle
 dependencies {
-  implementation 'cloud.pluses:ktypes:1.0.0'
+  implementation 'cloud.pluses:ktypes:1.1.0'
 }
 ```
 
